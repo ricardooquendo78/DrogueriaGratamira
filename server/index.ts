@@ -2,8 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { TransactionModel } from './models/Transaction';
-import { SupplierModel, CategoryModel, MonthlyClosureModel, AppSettingsModel, UserModel } from './models/OtherModels';
+import { TransactionModel } from './models/Transaction.js';
+import { SupplierModel, CategoryModel, MonthlyClosureModel, AppSettingsModel, UserModel } from './models/OtherModels.js';
 
 dotenv.config();
 
