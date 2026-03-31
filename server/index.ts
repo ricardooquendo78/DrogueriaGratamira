@@ -27,7 +27,7 @@ import dns from 'dns';
 // Fix for Node.js DNS resolution issues on Windows (ECONNREFUSED for SRV records)
 dns.setDefaultResultOrder('ipv4first');
 
-mongoose.connect(MONGODB_URI, { family: 4 })
+mongoose.connect(MONGODB_URI)
   .then(async () => {
     console.log('Connected to MongoDB Atlas');
     // Seed Default Users
