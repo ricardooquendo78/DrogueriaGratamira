@@ -779,16 +779,23 @@ export default function App() {
     }
 
     try {
-      await fetch(`${API_URL}/transactions`, {
+      const response = await fetch(`${API_URL}/transactions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           amount: amountNum,
           uid: user.uid,
-          monthYear
+          monthYear,
+          supplierId: (formData.supplierId && formData.supplierId.trim() !== '') ? formData.supplierId : null
         })
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al guardar la transacción');
+      }
+
       setFormData({
         type: 'expense',
         amount: '',
@@ -798,10 +805,18 @@ export default function App() {
         date: format(new Date(), "yyyy-MM-dd'T'HH:mm"),
         supplierId: ''
       });
+      
+      // Actualizar el estado local antes de recargar para una mejor UX
+      const savedTransaction = await response.json();
+      setTransactions(prev => [savedTransaction, ...prev]);
+      
       setView('dashboard');
-      window.location.reload();
+      // No recargamos instantáneamente para que el usuario vea el cambio, 
+      // o usamos window.location.reload() si lo prefieres, pero después de validar éxito.
+      window.location.reload(); 
     } catch (error) {
       console.error("Error adding transaction:", error);
+      alert(error instanceof Error ? error.message : 'Error desconocido al guardar');
     }
   };
 
