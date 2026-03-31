@@ -1,0 +1,168 @@
+{
+  "entities": {
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A financial transaction (income or expense).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["income", "expense"],
+          "description": "The type of transaction."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the transaction."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["business", "home"],
+          "description": "The category of the transaction."
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "The subcategory (e.g., 'Facturas proveedores', 'Mercado')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed observation of the expense."
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time of the transaction."
+        },
+        "monthYear": {
+          "type": "string",
+          "description": "The month and year (e.g., '2026-03') for filtering."
+        },
+        "supplierId": {
+          "type": "string",
+          "description": "The ID of the supplier (optional, for 'Facturas proveedores')."
+        },
+        "uid": {
+          "type": "string",
+          "description": "The user ID who created the transaction."
+        }
+      },
+      "required": ["type", "amount", "category", "subcategory", "date", "monthYear", "uid"]
+    },
+    "MonthlyClosure": {
+      "title": "Monthly Closure",
+      "description": "A summary of a month's financial performance.",
+      "type": "object",
+      "properties": {
+        "monthYear": {
+          "type": "string",
+          "description": "The month and year (e.g., '2026-03')."
+        },
+        "totalIncome": {
+          "type": "number",
+          "description": "Total income for the month."
+        },
+        "totalBusinessExpenses": {
+          "type": "number",
+          "description": "Total business expenses for the month."
+        },
+        "totalHomeExpenses": {
+          "type": "number",
+          "description": "Total home expenses for the month."
+        },
+        "balance": {
+          "type": "number",
+          "description": "The final balance for the month."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the closure was performed."
+        },
+        "uid": {
+          "type": "string",
+          "description": "The user ID who performed the closure."
+        }
+      },
+      "required": ["monthYear", "totalIncome", "totalBusinessExpenses", "totalHomeExpenses", "balance", "timestamp", "uid"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Application settings.",
+      "type": "object",
+      "properties": {
+        "fixedExpensesGoal": {
+          "type": "number",
+          "description": "The fixed expenses goal for the thermometer."
+        }
+      }
+    },
+    "Category": {
+      "title": "Category",
+      "description": "A subcategory for transactions.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the subcategory."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["income", "expense"],
+          "description": "The type of transaction this category belongs to."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["business", "home"],
+          "description": "The main category (business or home) for expenses."
+        },
+        "uid": {
+          "type": "string",
+          "description": "The user ID who created the category."
+        }
+      },
+      "required": ["name", "type", "category", "uid"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "A supplier for business expenses.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the supplier."
+        },
+        "uid": {
+          "type": "string",
+          "description": "The user ID who created the supplier."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the supplier was created."
+        }
+      },
+      "required": ["name", "uid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Collection of all transactions."
+    },
+    "/monthlyClosures/{closureId}": {
+      "schema": "MonthlyClosure",
+      "description": "Historical record of monthly closures."
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Global application settings."
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Custom subcategories for transactions."
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "List of suppliers for business expenses."
+    }
+  }
+}

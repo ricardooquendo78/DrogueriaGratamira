@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Pacifico", cursive;
+  --font-accent: "Space Grotesk", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-brand-bg: #0B0D17; /* Obsidian Black */
+  --color-brand-paper: rgba(255, 255, 255, 0.03);
+  --color-brand-primary: #9D4EDD; /* Galactic Purple */
+  --color-brand-secondary: #00F5FF; /* Electric Cyan */
+  --color-brand-accent: #FF007F; /* Neon Pink */
+  --color-brand-ink: #F8F9FA; /* Off-white */
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-bg);
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(157, 78, 221, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.05) 0%, transparent 50%);
+  color: var(--color-brand-ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.02em;
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+.organic-card {
+  @apply bg-white/5 backdrop-blur-xl rounded-[32px] border border-white/10 transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_40px_rgba(157,78,221,0.15)];
+}
+
+.organic-btn {
+  @apply px-8 py-3 rounded-full font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 shadow-lg;
+}
+
+.organic-input {
+  @apply w-full px-6 py-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 text-brand-ink placeholder:text-white/30 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20 transition-all outline-none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20;
+}
