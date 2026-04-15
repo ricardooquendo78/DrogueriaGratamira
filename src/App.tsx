@@ -46,7 +46,9 @@ import {
   Trash2,
   Save,
   Sun,
-  Moon
+  Moon,
+  Download,
+  FileText
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -61,6 +63,7 @@ import {
   Pie,
   Legend
 } from 'recharts';
+import * as XLSX from 'xlsx';
 import { format, startOfMonth, endOfMonth, parseISO, isSameMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { clsx, type ClassValue } from 'clsx';
@@ -849,6 +852,41 @@ export default function App() {
     }
   };
 
+  const handleExportExcel = () => {
+    if (!selectedClosure || !closureTransactions.length) {
+      alert("No hay transacciones para exportar");
+      return;
+    }
+
+    const fileName = `Reporte_Gratamira_${selectedClosure.monthYear}.xlsx`;
+    
+    // Prepare data for Excel
+    const data = closureTransactions.map(t => ({
+      Fecha: format(parseISO(t.date), "dd/MM/yyyy"),
+      Tipo: t.type === 'income' ? 'Ingreso' : 'Egreso',
+      'Ámbito': t.category === 'business' ? 'Negocio' : 'Hogar',
+      'Subcategoría': t.subcategory,
+      'Descripción': t.description || '-',
+      Monto: t.amount
+    }));
+
+    // Create summary rows
+    const summaryData = [
+      {}, // Empty row
+      { Fecha: 'RESUMEN TOTAL', Tipo: '', 'Ámbito': '', 'Subcategoría': '', 'Descripción': '', Monto: '' },
+      { Fecha: 'Total Ingresos', Tipo: '', 'Ámbito': '', 'Subcategoría': '', 'Descripción': '', Monto: selectedClosure.totalIncome },
+      { Fecha: 'Gastos Negocio', Tipo: '', 'Ámbito': '', 'Subcategoría': '', 'Descripción': '', Monto: selectedClosure.totalBusinessExpenses },
+      { Fecha: 'Gastos Hogar', Tipo: '', 'Ámbito': '', 'Subcategoría': '', 'Descripción': '', Monto: selectedClosure.totalHomeExpenses },
+      { Fecha: 'Balance Neto', Tipo: '', 'Ámbito': '', 'Subcategoría': '', 'Descripción': '', Monto: selectedClosure.balance }
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet([...data, ...summaryData]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transacciones");
+    
+    XLSX.writeFile(workbook, fileName);
+  };
+
   const groupedClosureTransactions = useMemo(() => {
     const groups: { [key: string]: Transaction[] } = {};
     closureTransactions.forEach(t => {
@@ -1336,17 +1374,21 @@ export default function App() {
                     </div>
                   </div>
                   
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     <div className="flex justify-between items-center text-xs font-medium">
                       <span className="text-brand-secondary">Ingresos Totales</span>
-                      <span className="text-emerald-600 font-bold">${Math.round(c.totalIncome).toLocaleString('es-CO')}</span>
+                      <span className="text-emerald-500 font-bold">${Math.round(c.totalIncome).toLocaleString('es-CO')}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-medium">
-                      <span className="text-brand-secondary">Egresos Totales</span>
-                      <span className="text-rose-600 font-bold">${Math.round(c.totalBusinessExpenses + c.totalHomeExpenses).toLocaleString('es-CO')}</span>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-brand-ink/40">Gastos Negocio</span>
+                      <span className="text-brand-ink/60 font-medium">${Math.round(c.totalBusinessExpenses).toLocaleString('es-CO')}</span>
                     </div>
-                    <div className="pt-6 border-t border-black/5 flex justify-between items-end">
-                      <span className="text-xs font-bold text-brand-secondary uppercase tracking-widest">Balance Neto</span>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-brand-ink/40">Gastos Hogar</span>
+                      <span className="text-brand-ink/60 font-medium">${Math.round(c.totalHomeExpenses).toLocaleString('es-CO')}</span>
+                    </div>
+                    <div className="pt-6 border-t border-brand-ink/5 flex justify-between items-end">
+                      <span className="text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Balance Neto</span>
                       <span className="text-3xl font-display text-brand-primary italic">${Math.round(c.balance).toLocaleString('es-CO')}</span>
                     </div>
                   </div>
@@ -1364,12 +1406,21 @@ export default function App() {
 
         {view === 'closure-detail' && selectedClosure && (
           <div className="space-y-12">
-            <button 
-              onClick={() => setView('history')}
-              className="flex items-center gap-3 text-brand-secondary hover:text-brand-primary transition-colors font-medium"
-            >
-              <ArrowLeft className="w-5 h-5" /> Volver al Historial
-            </button>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+              <button 
+                onClick={() => setView('history')}
+                className="flex items-center gap-3 text-brand-secondary hover:text-brand-primary transition-colors font-medium group"
+              >
+                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Volver al Historial
+              </button>
+
+              <button 
+                onClick={handleExportExcel}
+                className="organic-btn bg-emerald-600 text-white flex items-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-600/20"
+              >
+                <Download className="w-5 h-5" /> Exportar a Excel
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <StatCard 
