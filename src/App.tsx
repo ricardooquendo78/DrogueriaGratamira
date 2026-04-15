@@ -166,7 +166,7 @@ const Auth = ({ onLogin }: { onLogin: (user: AppUser) => void }) => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="max-w-md w-full organic-card p-8 md:p-12 text-center relative z-10"
+        className="max-w-md w-full organic-card p-6 md:p-12 text-center relative z-10"
       >
         <div className="w-20 h-20 md:w-24 md:h-24 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 md:mb-10 border border-white/10">
           <Wallet className="text-brand-secondary w-10 h-10 md:w-12 md:h-12" />
@@ -208,7 +208,7 @@ const Auth = ({ onLogin }: { onLogin: (user: AppUser) => void }) => {
 const StatCard = ({ title, amount, icon: Icon, colorClass, trend }: any) => (
   <motion.div 
     whileHover={{ y: -4, scale: 1.02 }}
-    className="organic-card p-6 md:p-8 group overflow-hidden relative"
+    className="organic-card p-5 md:p-8 group overflow-hidden relative"
   >
     <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-brand-primary/20 transition-colors" />
     <div className="flex justify-between items-start mb-6 md:mb-8 relative z-10">
@@ -233,7 +233,7 @@ const HealthThermometer = ({ current, goal }: { current: number, goal: number })
   const isHealthy = current >= goal;
 
   return (
-    <div className="organic-card p-6 md:p-8 relative overflow-hidden">
+    <div className="organic-card p-5 md:p-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-accent opacity-50" />
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg md:text-xl font-accent italic text-brand-ink">Salud de Caja</h3>
@@ -502,7 +502,7 @@ const SuppliersReport = ({ transactions, suppliers }: { transactions: Transactio
     <div className="space-y-10 md:space-y-12">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
         {supplierStats.map((stat) => (
-          <div key={stat.id} className="organic-card p-6 md:p-10 flex flex-col">
+          <div key={stat.id} className="organic-card p-5 md:p-10 flex flex-col">
             <div className="flex justify-between items-start mb-6 md:mb-8">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-brand-accent/10 flex items-center justify-center">
                 <Briefcase className="w-6 h-6 md:w-7 md:h-7 text-brand-accent" />
@@ -872,13 +872,13 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row font-sans selection:bg-brand-primary/20 relative overflow-hidden">
+      <div className="h-screen bg-brand-bg flex flex-col md:flex-row font-sans selection:bg-brand-primary/20 relative overflow-hidden">
         {/* Background nebula effects */}
         <div className="fixed top-[-20%] left-[-10%] w-[70%] h-[70%] bg-brand-primary/5 blur-[150px] rounded-full pointer-events-none" />
         <div className="fixed bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-brand-secondary/5 blur-[150px] rounded-full pointer-events-none" />
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-brand-bg/50 backdrop-blur-xl border-b border-brand-ink/10 p-6 flex items-center justify-between sticky top-0 z-30">
+      <div className="md:hidden bg-brand-bg/80 backdrop-blur-2xl border-b border-brand-ink/5 p-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20 border border-white/10">
             <Wallet className="text-white w-5 h-5" />
@@ -967,10 +967,10 @@ export default function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-16 overflow-auto">
-        <header className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-8">
+      <main className="flex-1 p-4 md:p-16 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <header className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-16 gap-4 md:gap-8">
           <div>
-            <h2 className="text-4xl md:text-7xl font-display text-brand-ink leading-tight md:leading-none mb-4 italic">
+            <h2 className="text-3xl md:text-7xl font-display text-brand-ink leading-tight mb-2 italic">
               {view === 'dashboard' && 'Resumen General'}
               {view === 'add' && 'Nuevo Registro'}
               {view === 'history' && 'Historial de Cierres'}
@@ -978,34 +978,25 @@ export default function App() {
               {view === 'suppliers-report' && 'Pagos a Proveedores'}
               {view === 'categories' && 'Gestión de Categorías'}
             </h2>
-            <p className="text-brand-secondary font-medium tracking-wide">
+            <p className="text-brand-secondary text-xs md:text-base font-medium tracking-wide">
               {view === 'closure-detail' && selectedClosure 
                 ? format(parseISO(`${selectedClosure.monthYear}-01`), "MMMM yyyy", { locale: es })
                 : format(new Date(), "MMMM yyyy", { locale: es })}
             </p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={toggleTheme}
-              className="p-4 bg-brand-bg rounded-2xl border border-black/5 hover:border-brand-primary/20 transition-all text-brand-ink shadow-sm"
-              title={theme === 'dark' ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-            >
-              {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-            </button>
             {view === 'dashboard' && (
-              <div className="hidden sm:flex items-center gap-4 bg-brand-bg px-6 py-4 rounded-2xl border border-black/5">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-xs font-bold text-brand-ink uppercase tracking-widest">Mes en curso</span>
+              <div className="flex items-center gap-3 bg-brand-bg/50 px-4 py-2 rounded-xl border border-brand-ink/5 backdrop-blur-sm">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-[10px] font-bold text-brand-ink/60 uppercase tracking-widest">En curso</span>
               </div>
             )}
-          </div>
         </header>
 
         {view === 'dashboard' && (
           <div className="space-y-8">
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
               <StatCard 
                 title="Saldo Disponible" 
                 amount={totals.balance} 
@@ -1035,9 +1026,9 @@ export default function App() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
               {/* Charts */}
               <div className="lg:col-span-2 space-y-10">
-                <div className="organic-card p-10">
+                <div className="organic-card p-5 md:p-10 text-brand-ink">
                   <h3 className="text-2xl font-accent mb-8 italic text-brand-ink">Balance Mensual</h3>
-                  <div className="h-[350px]">
+                  <div className="h-[280px] md:h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.1)"} />
@@ -1075,9 +1066,9 @@ export default function App() {
                 </div>
 
                 {/* Recent Transactions */}
-                <div className="organic-card p-10">
+                <div className="organic-card p-5 md:p-10">
                   <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-accent italic text-brand-ink">Actividad Reciente</h3>
+                    <h3 className="text-xl md:text-2xl font-accent italic text-brand-ink">Actividad Reciente</h3>
                     <button onClick={() => setView('add')} className="text-sm text-brand-secondary font-bold hover:text-brand-primary transition-colors uppercase tracking-widest">Registrar nueva</button>
                   </div>
                   <div className="divide-y divide-brand-ink/5">
@@ -1121,7 +1112,7 @@ export default function App() {
               <div className="space-y-10">
                 <HealthThermometer current={totals.income} goal={settings.fixedExpensesGoal} />
                 
-                <div className="bg-brand-primary/20 backdrop-blur-xl p-10 rounded-[40px] text-white border border-white/10 relative overflow-hidden">
+                <div className="bg-brand-primary/20 backdrop-blur-xl p-6 md:p-10 rounded-[32px] md:rounded-[40px] text-white border border-white/10 relative overflow-hidden">
                   <div className="relative z-10">
                     <h3 className="text-2xl font-accent mb-6 italic text-brand-ink">Distribución de Gastos</h3>
                     <div className="h-[250px] w-full">
@@ -1171,7 +1162,7 @@ export default function App() {
 
         {view === 'add' && (
           <div className="max-w-3xl mx-auto">
-            <div className="organic-card p-6 md:p-12">
+            <div className="organic-card p-5 md:p-12">
               <form onSubmit={handleAddTransaction} className="space-y-8 md:space-y-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 p-2 bg-brand-ink/5 rounded-[24px] border border-brand-ink/10">
                   <button 
@@ -1331,11 +1322,11 @@ export default function App() {
                 <div 
                   key={c.id} 
                   onClick={() => handleViewClosure(c)}
-                  className="organic-card p-10 cursor-pointer group hover:bg-white transition-all duration-500"
+                  className="organic-card p-6 md:p-10 cursor-pointer group hover:bg-brand-bg transition-all duration-500"
                 >
                   <div className="flex justify-between items-start mb-10">
                     <div>
-                      <h3 className="text-4xl font-display text-brand-ink italic leading-none">
+                      <h3 className="text-3xl md:text-4xl font-display text-brand-ink italic leading-none">
                         {format(parseISO(`${c.monthYear}-01`), "MMMM", { locale: es })}
                       </h3>
                       <p className="text-sm font-medium text-brand-secondary mt-2">{format(parseISO(`${c.monthYear}-01`), "yyyy")}</p>
@@ -1407,8 +1398,8 @@ export default function App() {
               />
             </div>
 
-            <div className="organic-card p-10">
-              <h3 className="text-3xl font-display mb-10 italic">Detalle Diario</h3>
+            <div className="organic-card p-5 md:p-10">
+              <h3 className="text-2xl md:text-3xl font-display mb-6 md:mb-10 italic">Detalle Diario</h3>
               
               {loadingClosure ? (
                 <div className="py-32 flex justify-center">
@@ -1426,7 +1417,7 @@ export default function App() {
                         <div className="flex items-center justify-between px-6 py-4 bg-brand-bg rounded-2xl">
                           <div className="flex items-center gap-4">
                             <Calendar className="w-6 h-6 text-brand-primary" />
-                            <span className="font-display text-2xl italic">
+                            <span className="font-display text-xl md:text-2xl italic">
                               {format(parseISO(day), "EEEE, d 'de' MMMM", { locale: es })}
                             </span>
                           </div>
