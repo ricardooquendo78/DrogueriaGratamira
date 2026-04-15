@@ -44,7 +44,9 @@ import {
   Settings,
   Tags,
   Trash2,
-  Save
+  Save,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -170,7 +172,7 @@ const Auth = ({ onLogin }: { onLogin: (user: AppUser) => void }) => {
           <Wallet className="text-brand-secondary w-10 h-10 md:w-12 md:h-12" />
         </div>
         <h1 className="text-4xl md:text-5xl font-display text-brand-ink mb-4 tracking-tight">Gratamira</h1>
-        <p className="text-white/50 mb-8 md:mb-12 font-medium tracking-wide text-xs md:text-sm">Acceso Autorizado</p>
+        <p className="text-brand-ink/50 mb-8 md:mb-12 font-medium tracking-wide text-xs md:text-sm">Acceso Autorizado</p>
         
         <form onSubmit={handleLogin} className="space-y-4">
           <input 
@@ -214,12 +216,13 @@ const StatCard = ({ title, amount, icon: Icon, colorClass, trend }: any) => (
         <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
       </div>
       {trend && (
-        <div className={cn("px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold backdrop-blur-md border", trend > 0 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20")}>
+        <div className={cn("px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold backdrop-blur-md border", trend > 0 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20")}>
           {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
         </div>
       )}
     </div>
-    <h3 className="text-xs md:text-sm font-medium text-white/50 mb-2 relative z-10 uppercase tracking-widest">{title}</h3>
+    </div>
+    <h3 className="text-xs md:text-sm font-medium text-brand-ink/50 mb-2 relative z-10 uppercase tracking-widest">{title}</h3>
     <p className="text-2xl md:text-3xl font-accent text-brand-ink relative z-10">
       ${Math.round(amount).toLocaleString('es-CO')}
     </p>
@@ -237,7 +240,7 @@ const HealthThermometer = ({ current, goal }: { current: number, goal: number })
         <h3 className="text-lg md:text-xl font-accent italic text-brand-ink">Salud de Caja</h3>
         <span className={cn(
           "px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold backdrop-blur-md border",
-          isHealthy ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+          isHealthy ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
         )}>
           {isHealthy ? 'Estado Saludable' : 'Atención Requerida'}
         </span>
@@ -555,6 +558,17 @@ export default function App() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [settings, setSettings] = useState<AppSettings>({ fixedExpensesGoal: 5000000 });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('gratamira_theme');
+    return (saved as 'light' | 'dark') || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('gratamira_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -872,12 +886,20 @@ export default function App() {
           </div>
           <h1 className="text-2xl font-display tracking-tight text-brand-ink">Gratamira</h1>
         </div>
-        <button 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
-        >
-          {isMobileMenuOpen ? <ArrowLeft className="w-6 h-6" /> : <LayoutDashboard className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={toggleTheme}
+            className="p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
+          >
+            {isMobileMenuOpen ? <ArrowLeft className="w-6 h-6" /> : <LayoutDashboard className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar / Navigation */}
@@ -964,12 +986,21 @@ export default function App() {
             </p>
           </div>
           
-          {view === 'dashboard' && (
-            <div className="flex items-center gap-4 bg-brand-bg px-6 py-3 rounded-2xl border border-black/5">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-brand-ink uppercase tracking-widest">Mes en curso</span>
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={toggleTheme}
+              className="p-4 bg-brand-bg rounded-2xl border border-black/5 hover:border-brand-primary/20 transition-all text-brand-ink shadow-sm"
+              title={theme === 'dark' ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+            >
+              {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+            </button>
+            {view === 'dashboard' && (
+              <div className="hidden sm:flex items-center gap-4 bg-brand-bg px-6 py-4 rounded-2xl border border-black/5">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-xs font-bold text-brand-ink uppercase tracking-widest">Mes en curso</span>
+              </div>
+            )}
+          </div>
         </header>
 
         {view === 'dashboard' && (
@@ -1010,30 +1041,30 @@ export default function App() {
                   <div className="h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"} />
                         <XAxis 
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }} 
+                          tick={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)', fontSize: 12 }} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }} 
+                          tick={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)', fontSize: 12 }} 
                           tickFormatter={(value) => `$${value / 1000}k`}
                         />
                         <Tooltip 
-                          cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                          cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}
                           contentStyle={{ 
                             borderRadius: '24px', 
-                            border: '1px solid rgba(255,255,255,0.1)', 
-                            background: 'rgba(11, 13, 23, 0.9)',
+                            border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)', 
+                            background: theme === 'dark' ? 'rgba(11, 13, 23, 0.9)' : 'rgba(255, 255, 255, 0.9)',
                             backdropFilter: 'blur(12px)',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                             padding: '16px'
                           }}
-                          itemStyle={{ color: '#F8F9FA' }}
+                          itemStyle={{ color: 'var(--color-brand-ink)' }}
                           formatter={(value: number) => `$${value.toLocaleString()}`}
                         />
                         <Bar dataKey="Ingresos" stackId="a" fill="#9D4EDD" radius={[10, 10, 0, 0]} barSize={60} />
@@ -1112,12 +1143,12 @@ export default function App() {
                           <Tooltip 
                             contentStyle={{ 
                               borderRadius: '20px', 
-                              border: '1px solid rgba(255,255,255,0.1)', 
-                              background: 'rgba(11, 13, 23, 0.9)',
+                              border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)', 
+                              background: theme === 'dark' ? 'rgba(11, 13, 23, 0.9)' : 'rgba(255, 255, 255, 0.9)',
                               backdropFilter: 'blur(12px)',
                               padding: '12px' 
                             }}
-                            itemStyle={{ color: '#F8F9FA' }}
+                            itemStyle={{ color: 'var(--color-brand-ink)' }}
                             formatter={(value: number) => `$${value.toLocaleString()}`}
                           />
                         </PieChart>
