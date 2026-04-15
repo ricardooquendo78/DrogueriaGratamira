@@ -9,7 +9,7 @@ export interface AppUser {
 
 // In production (Vercel), requests to /api are handled by the serverless functions.
 // In development, they are routed to the local Node app.
-const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
+const API_URL = (import.meta as any).env?.PROD ? '/api' : 'http://localhost:5000/api';
 import { 
   Transaction, 
   MonthlyClosure, 
@@ -210,7 +210,7 @@ const StatCard = ({ title, amount, icon: Icon, colorClass, trend }: any) => (
     whileHover={{ y: -4, scale: 1.02 }}
     className="organic-card p-6 md:p-8 group overflow-hidden relative"
   >
-    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-brand-primary/10 transition-colors" />
+    <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-brand-primary/20 transition-colors" />
     <div className="flex justify-between items-start mb-6 md:mb-8 relative z-10">
       <div className={cn("w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-lg", colorClass)}>
         <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
@@ -220,7 +220,6 @@ const StatCard = ({ title, amount, icon: Icon, colorClass, trend }: any) => (
           {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
         </div>
       )}
-    </div>
     </div>
     <h3 className="text-xs md:text-sm font-medium text-brand-ink/50 mb-2 relative z-10 uppercase tracking-widest">{title}</h3>
     <p className="text-2xl md:text-3xl font-accent text-brand-ink relative z-10">
@@ -879,7 +878,7 @@ export default function App() {
         <div className="fixed bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-brand-secondary/5 blur-[150px] rounded-full pointer-events-none" />
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-white/5 backdrop-blur-xl border-b border-white/10 p-6 flex items-center justify-between sticky top-0 z-30">
+      <div className="md:hidden bg-brand-bg/50 backdrop-blur-xl border-b border-brand-ink/10 p-6 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20 border border-white/10">
             <Wallet className="text-white w-5 h-5" />
@@ -889,13 +888,13 @@ export default function App() {
         <div className="flex items-center gap-3">
           <button 
             onClick={toggleTheme}
-            className="p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
+            className="p-3 bg-brand-ink/5 rounded-xl text-brand-ink border border-brand-ink/10"
           >
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
+            className="p-3 bg-brand-ink/5 rounded-xl text-brand-ink border border-brand-ink/10"
           >
             {isMobileMenuOpen ? <ArrowLeft className="w-6 h-6" /> : <LayoutDashboard className="w-6 h-6" />}
           </button>
@@ -910,7 +909,7 @@ export default function App() {
         {/* Mobile Close Button */}
         <button 
           onClick={() => setIsMobileMenuOpen(false)}
-          className="md:hidden absolute top-6 right-6 p-3 bg-white/5 rounded-xl text-brand-ink border border-white/10"
+          className="md:hidden absolute top-6 right-6 p-3 bg-brand-ink/5 rounded-xl text-brand-ink border border-brand-ink/10"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
@@ -940,7 +939,7 @@ export default function App() {
                 "w-full flex items-center gap-5 px-8 py-5 rounded-2xl transition-all duration-300 border",
                 view === item.id 
                   ? "bg-brand-primary text-white shadow-xl shadow-brand-primary/20 border-white/20" 
-                  : "text-white/40 border-transparent hover:bg-white/5 hover:text-brand-ink"
+                  : "text-brand-ink/40 border-transparent hover:bg-brand-ink/5 hover:text-brand-ink"
               )}
             >
               <item.icon className="w-5 h-5" />
@@ -950,11 +949,11 @@ export default function App() {
         </div>
 
         <div className="mt-auto pt-10 border-t border-white/10">
-          <div className="flex items-center gap-5 mb-8 p-5 bg-white/5 rounded-3xl border border-white/5">
-            <img src={user.photoURL || ''} alt={user.displayName || ''} className="w-12 h-12 rounded-2xl border-2 border-white/10 shadow-sm" />
+          <div className="flex items-center gap-5 mb-8 p-5 bg-brand-ink/5 rounded-3xl border border-brand-ink/5">
+            <img src={user.photoURL || ''} alt={user.displayName || ''} className="w-12 h-12 rounded-2xl border-2 border-brand-ink/10 shadow-sm" />
             <div className="overflow-hidden">
               <p className="text-sm font-semibold text-brand-ink truncate">{user.displayName}</p>
-              <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Administrador</p>
+              <p className="text-[10px] text-brand-ink/30 font-bold uppercase tracking-widest">Administrador</p>
             </div>
           </div>
           <button 
@@ -1041,7 +1040,7 @@ export default function App() {
                   <div className="h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.1)"} />
                         <XAxis 
                           dataKey="name" 
                           axisLine={false} 
@@ -1081,37 +1080,37 @@ export default function App() {
                     <h3 className="text-2xl font-accent italic text-brand-ink">Actividad Reciente</h3>
                     <button onClick={() => setView('add')} className="text-sm text-brand-secondary font-bold hover:text-brand-primary transition-colors uppercase tracking-widest">Registrar nueva</button>
                   </div>
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y divide-brand-ink/5">
                     {transactions.slice(0, 6).map((t) => (
-                      <div key={t.id} className="flex items-center justify-between py-5 group transition-all">
+                       <div key={t.id} className="flex items-center justify-between py-5 group transition-all">
                         <div className="flex items-center gap-5">
                           <div className={cn(
                             "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border",
-                            t.type === 'income' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-white/5 text-white/40 border-white/10"
+                            t.type === 'income' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-brand-ink/5 text-brand-ink/40 border-brand-ink/10"
                           )}>
                             {t.type === 'income' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                           </div>
                           <div>
                             <p className="font-semibold text-brand-ink">{t.subcategory}</p>
-                            <p className="text-xs text-white/40 font-medium">
+                            <p className="text-xs text-brand-ink/40 font-medium">
                               {format(parseISO(t.date), "d 'de' MMM", { locale: es })} • {t.category === 'business' ? 'Negocio' : 'Hogar'}
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={cn("font-bold text-lg", t.type === 'income' ? "text-emerald-400" : "text-brand-ink")}>
+                          <p className={cn("font-bold text-lg", t.type === 'income' ? "text-emerald-600 dark:text-emerald-400" : "text-brand-ink")}>
                             {t.type === 'income' ? '+' : '-'}${t.amount.toLocaleString('es-CO')}
                           </p>
-                          {t.description && <p className="text-[10px] text-white/30 truncate max-w-[150px]">{t.description}</p>}
+                          {t.description && <p className="text-[10px] text-brand-ink/30 truncate max-w-[150px]">{t.description}</p>}
                         </div>
                       </div>
                     ))}
                     {transactions.length === 0 && (
                       <div className="text-center py-16">
-                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
-                          <Wallet className="text-white/20 w-8 h-8" />
+                        <div className="w-16 h-16 bg-brand-ink/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-ink/10">
+                          <Wallet className="text-brand-ink/20 w-8 h-8" />
                         </div>
-                        <p className="text-white/30 italic">No hay movimientos registrados este mes.</p>
+                        <p className="text-brand-ink/30 italic">No hay movimientos registrados este mes.</p>
                       </div>
                     )}
                   </div>
@@ -1157,8 +1156,8 @@ export default function App() {
                     <div className="space-y-3 mt-6 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
                       {expenseDistribution.slice(0, 6).map((item, idx) => (
                         <div key={idx} className="flex justify-between text-xs items-center">
-                          <span className="text-white/60 truncate mr-3 font-medium">{item.name}</span>
-                          <span className="font-bold bg-white/10 px-2 py-1 rounded-lg text-brand-secondary">${Math.round(item.value).toLocaleString()}</span>
+                          <span className="text-brand-ink/60 truncate mr-3 font-medium">{item.name}</span>
+                          <span className="font-bold bg-brand-ink/10 px-2 py-1 rounded-lg text-brand-secondary">${Math.round(item.value).toLocaleString()}</span>
                         </div>
                       ))}
                     </div>
@@ -1174,7 +1173,7 @@ export default function App() {
           <div className="max-w-3xl mx-auto">
             <div className="organic-card p-6 md:p-12">
               <form onSubmit={handleAddTransaction} className="space-y-8 md:space-y-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 p-2 bg-white/5 rounded-[24px] border border-white/10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 p-2 bg-brand-ink/5 rounded-[24px] border border-brand-ink/10">
                   <button 
                     type="button"
                     onClick={() => setFormData({ ...formData, type: 'expense', category: 'business', subcategory: '' })}
