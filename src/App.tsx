@@ -74,6 +74,11 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Utility to map MongoDB _id to frontend id
+function mapId<T extends { _id?: string; id?: string }>(item: T): T & { id: string } {
+  return { ...item, id: item._id || item.id || '' } as T & { id: string };
+}
+
 // --- Types & Enums for Error Handling ---
 
 enum OperationType {
@@ -597,9 +602,10 @@ export default function App() {
       try {
         const response = await fetch(`${API_URL}/transactions/${user.uid}`);
         const data = await response.json();
+        const mappedData = data.map(mapId);
         const currentMonth = format(new Date(), 'yyyy-MM');
-        setTransactions(data.filter((t: Transaction) => t.monthYear === currentMonth));
-        setAllTransactions(data);
+        setTransactions(mappedData.filter((t: Transaction) => t.monthYear === currentMonth));
+        setAllTransactions(mappedData);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -619,8 +625,9 @@ export default function App() {
       try {
         const response = await fetch(`${API_URL}/suppliers/${user.uid}`);
         const data = await response.json();
-        data.sort((a: Supplier, b: Supplier) => a.name.localeCompare(b.name));
-        setSuppliers(data);
+        const mappedSuppliers = data.map(mapId);
+        mappedSuppliers.sort((a: Supplier, b: Supplier) => a.name.localeCompare(b.name));
+        setSuppliers(mappedSuppliers);
       } catch (error) {
         console.error("Error fetching suppliers:", error);
       }
@@ -634,7 +641,7 @@ export default function App() {
       try {
         const response = await fetch(`${API_URL}/closures/${user.uid}`);
         const data = await response.json();
-        setClosures(data);
+        setClosures(data.map(mapId));
       } catch (error) {
         console.error("Error fetching closures:", error);
       }
@@ -644,7 +651,7 @@ export default function App() {
 
   // Automatic Month Closure Logic
   useEffect(() => {
-    if (!user || allTransactions.length === 0 || closures.length === 0) return;
+    if (!user || allTransactions.length === 0) return;
 
     const checkAndCloseMonths = async () => {
       const currentMonth = format(new Date(), 'yyyy-MM');
@@ -687,6 +694,10 @@ export default function App() {
               })
             });
             console.log(`Auto-closed month: ${month}`);
+            // Force re-fetch closures to update UI
+            const res = await fetch(`${API_URL}/closures/${user.uid}`);
+            const data = await res.json();
+            setClosures(data.map(mapId));
           } catch (error) {
             console.error(`Error auto-closing month ${month}:`, error);
           }
@@ -718,8 +729,9 @@ export default function App() {
       try {
         const response = await fetch(`${API_URL}/categories/${user.uid}`);
         const cats = await response.json();
+        const mappedCats = cats.map(mapId);
         
-        if (cats.length === 0) {
+        if (mappedCats.length === 0) {
           // Seed initial categories if empty
           const initial = [
             ...INCOME_SUBCATEGORIES.map(name => ({ name, type: 'income' as TransactionType, category: 'business' as CategoryType, uid: user.uid })),
@@ -735,9 +747,9 @@ export default function App() {
           }
           // Fetch again after seeding
           const res2 = await fetch(`${API_URL}/categories/${user.uid}`);
-          setCategories(await res2.json());
+          setCategories((await res2.json()).map(mapId));
         } else {
-          setCategories(cats);
+          setCategories(mappedCats);
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -794,6 +806,12 @@ export default function App() {
       return;
     }
 
+    // Set default supplier if subcategory is Facturas proveedores and none selected
+    let finalSupplierId = formData.supplierId;
+    if (formData.subcategory === 'Facturas proveedores' && !finalSupplierId && suppliers.length > 0) {
+      finalSupplierId = suppliers[0].id;
+    }
+
     try {
       const response = await fetch(`${API_URL}/transactions`, {
         method: 'POST',
@@ -803,7 +821,7 @@ export default function App() {
           amount: amountNum,
           uid: user.uid,
           monthYear,
-          supplierId: (formData.supplierId && formData.supplierId.trim() !== '') ? formData.supplierId : null
+          supplierId: (finalSupplierId && finalSupplierId.trim() !== '') ? finalSupplierId : null
         })
       });
 
